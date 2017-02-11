@@ -62,6 +62,7 @@ def messenger_post():
         for entry in data['entry']:
             # get all the messages
             messages = entry['messaging']
+            print messages
             if messages[0]:
                 # Get the first message
                 message = messages[0]
@@ -124,32 +125,17 @@ def get_category(request):
     if category:
         context['findingCategory'] = category;
         if context.get('missingCategory') is not None:
-            del context['missingCategory']
+            del context['missingCategory'];
     else:
         context['missingCategory'] = True
         if context.get('findingCategory') is not None:
             del context['findingCategory'];
     return context
 
-def get_forecast(request):
-    context = request['context']
-    entities = request['entities']
-    loc = first_entity_value(entities, 'location')
-    if loc:
-        # This is where we could use a weather service api to get the weather.
-        context['forecast'] = 'sunny'
-        if context.get('missingLocation') is not None:
-            del context['missingLocation']
-    else:
-        context['missingLocation'] = True
-        if context.get('forecast') is not None:
-            del context['forecast']
-    return context
-
 # Setup Actions
 actions = {
     'send': send,
-    'getForecast': get_forecast,
+    'getCategory': get_category,
 }
 
 # Setup Wit Client
