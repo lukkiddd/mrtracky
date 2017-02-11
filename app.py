@@ -117,6 +117,19 @@ def send(request, response):
     # send message
     fb_message(fb_id, text)
 
+def get_category(request):
+    context = request['context']
+    entities = request['entities']
+    category = first_entity_value(entities, 'category')
+    if category:
+        context['findingCategory'] = category;
+        if context.get('missingCategory') is not None:
+            del context['missingCategory']
+    else:
+        context['missingCategory'] = True
+        if context.get('findingCategory') is not None:
+            del context['findingCategory'];
+    return context
 
 def get_forecast(request):
     context = request['context']
