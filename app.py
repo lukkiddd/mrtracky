@@ -49,7 +49,7 @@ def messenger_webhook():
     else:
         return 'Invalid Request or Verification Token'
 
-@app.get('/ram'):
+@app.get('/ram')
 def get_ram():
     print request;
     return "ok", 200
