@@ -53,7 +53,7 @@ def messenger_webhook():
 def get_ram():
     data = request.json
     print data
-    return "ok", 200
+    return None
 
 # Facebook Messenger POST Webhook
 @app.post('/webhook')
