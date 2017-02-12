@@ -34,7 +34,6 @@ FB_VERIFY_TOKEN = os.environ.get('FB_VERIFY_TOKEN')
 debug(True)
 app = Bottle()
 
-
 # Facebook Messenger GET Webhook
 @app.get('/webhook')
 def messenger_webhook():
@@ -60,46 +59,29 @@ def messenger_post():
     data = request.json
     if data['object'] == 'page':
         for entry in data['entry']:
-            # get all the messages
             messages = entry['messaging']
-            print messages
             if messages[0]:
-                # Get the first message
                 message = messages[0]
-                # Yay! We got a new message!
-                # We retrieve the Facebook user ID of the sender
                 fb_id = message['sender']['id']
-                # We retrieve the message content
                 text = message['message']['text']
-                # Let's forward the message to the Wit.ai Bot Engine
-                # We handle the response in the function send()
                 client.run_actions(session_id=fb_id, message=text)
     else:
-        # Returned another event
         return 'Received Different Event'
     return None
 
 
 def fb_message(sender_id, text):
-    """
-    Function for returning response to messenger
-    """
     data = {
         'recipient': {'id': sender_id},
         'message': {'text': text}
     }
-    # Setup the query string with your PAGE TOKEN
     qs = 'access_token=' + FB_PAGE_TOKEN
-    # Send POST request to messenger
     resp = requests.post('https://graph.facebook.com/me/messages?' + qs,
                          json=data)
     return resp.content
 
 
 def first_entity_value(entities, entity):
-    """
-    Returns first entity value
-    """
     if entity not in entities:
         return None
     val = entities[entity][0]['value']
@@ -112,30 +94,14 @@ def send(request, response):
     """
     Sender function
     """
-    # We use the fb_id as equal to session_id
     fb_id = request['session_id']
     text = response['text']
-    # send message
     fb_message(fb_id, text)
 
-def get_category(request):
-    context = request['context']
-    entities = request['entities']
-    category = first_entity_value(entities, 'category')
-    if category:
-        context['findingCategory'] = category;
-        if context.get('missingCategory') is not None:
-            del context['missingCategory'];
-    else:
-        context['missingCategory'] = True
-        if context.get('findingCategory') is not None:
-            del context['findingCategory'];
-    return context
 
 # Setup Actions
 actions = {
     'send': send,
-    'getCategory': get_category,
 }
 
 # Setup Wit Client

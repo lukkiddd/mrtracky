@@ -9,5 +9,4 @@ requests==2.10.0
 wsgiref==0.1.2
 bottle
 bs4
--e git://github.com/mikexstudios/python-firebase.git#egg=python-firebase
 wit
