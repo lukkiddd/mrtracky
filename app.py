@@ -49,6 +49,10 @@ def messenger_webhook():
     else:
         return 'Invalid Request or Verification Token'
 
+@app.get('/ram'):
+def get_ram():
+    print request;
+    return "ok", 200
 
 # Facebook Messenger POST Webhook
 @app.post('/webhook')
