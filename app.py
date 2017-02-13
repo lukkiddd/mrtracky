@@ -32,6 +32,7 @@ def tracking():
     else:
         message = {
             "messages": [
+                {"text": u"สถานะ: " + status['tag'] },
                 {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
             ]
         }
@@ -54,8 +55,9 @@ def get_tracking(tracking_id):
     place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
     datetime = recent.find('div',{'class':'checkpoint__time'})
     date = datetime.find('strong').get_text()
+    tag = soup.find('p',{'class':'tag'}).get_text()
     time = datetime.find('div',{'class':'hint'}).get_text()
-    return {"place": place, "date":date, "time":time}
+    return {"place": place, "date":date, "time":time, "tag":tag}
 
 if __name__ == '__main__':
     app.run(debug=True)
