@@ -20,7 +20,7 @@ def verify():
         return request.args["hub.challenge"], 200
     return "ok", 200
 
-@app.route('/tracking', methods=['GET']):
+@app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.get_json()
     print data['tracking_id']
