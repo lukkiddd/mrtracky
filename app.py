@@ -37,6 +37,7 @@ def tracking():
            {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
          ]
         }
+        
     print message
     return message
 
