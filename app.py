@@ -1,111 +1,182 @@
-#!/usr/bin/env python
-# coding:utf-8
-
-# Messenger API integration example
-# We assume you have:
-# * a Wit.ai bot setup (https://wit.ai/docs/quickstart)
-# * a Messenger Platform setup (https://developers.facebook.com/docs/messenger-platform/quickstart)
-# You need to `pip install the following dependencies: requests, bottle.
-#
-# 1. pip install requests bottle
-# 2. You can run this example on a cloud service provider like Heroku, Google Cloud Platform or AWS.
-#    Note that webhooks must have a valid SSL certificate, signed by a certificate authority and won't work on your localhost.
-# 3. Set your environment variables e.g. WIT_TOKEN=your_wit_token
-#                                        FB_PAGE_TOKEN=your_page_token
-#                                        FB_VERIFY_TOKEN=your_verify_token
-# 4. Run your server e.g. python examples/messenger.py {PORT}
-# 5. Subscribe your page to the Webhooks using verify_token and `https://<your_host>/webhook` as callback URL.
-# 6. Talk to your bot on Messenger!
-
+# -*- coding: utf-8 -*-
 import os
+import sys
+import json
 import requests
-from sys import argv
-from wit import Wit
-from bottle import Bottle, request, debug
+import re
+import time
+from bs4 import BeautifulSoup
+from flask import Flask, request, render_template
+from firebase import Firebase
+import random
+import urllib
 
-# Wit.ai parameters
-WIT_TOKEN = os.environ.get('WIT_TOKEN')
-# Messenger API parameters
-FB_PAGE_TOKEN = os.environ.get('FB_PAGE_TOKEN')
-# A user secret to verify webhook get request.
-FB_VERIFY_TOKEN = os.environ.get('FB_VERIFY_TOKEN')
+app = Flask(__name__, static_url_path='')
 
-# Setup Bottle Server
-debug(True)
-app = Bottle()
+@app.route('/', methods=['GET'])
+def verify():
+    if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
+        if not request.args.get("hub.verify_token") == os.environ["VERIFY_TOKEN"]:
+            return "Verification token mismatch", 403
+        return request.args["hub.challenge"], 200
+    return render_template('index.html')
 
-# Facebook Messenger GET Webhook
-@app.get('/webhooks')
-def messenger_webhook():
-    """
-    A webhook to return a challenge
-    """
-    verify_token = request.query.get('hub.verify_token')
-    # check whether the verify tokens match
-    if verify_token == FB_VERIFY_TOKEN:
-        # respond with the challenge to confirm
-        challenge = request.query.get('hub.challenge')
-        return challenge
-    else:
-        return 'Invalid Request or Verification Token'
+@app.route('/', methods=['POST'])
+def webhook():
 
-# Facebook Messenger POST Webhook
-@app.post('/webhooks')
-def messenger_post():
-    """
-    Handler for webhook (currently for postback and messages)
-    """
-    data = request.json
-    if data['object'] == 'page':
-        for entry in data['entry']:
-            messages = entry['messaging']
-            if messages[0]:
-                message = messages[0]
-                fb_id = message['sender']['id']
-                text = message['message']['text']
-                client.run_actions(session_id=fb_id, message=text)
-    else:
-        return 'Received Different Event'
-    return None
+    data = request.get_json()
+    log(data)
 
+    if data["object"] == "page":
 
-def fb_message(sender_id, text):
-    data = {
-        'recipient': {'id': sender_id},
-        'message': {'text': text}
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
+
+                if messaging_event.get("message"):  # someone sent us a message
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    if(not messaging_event["message"].has_key('text')):
+                        return "ok", 200
+
+                    status = get_tracking(message_text)
+                    if status == None:
+                        send_message(sender_id, "เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า")
+                        return "ok",200
+                    else:
+                        send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status.place + " เมื่อตอน " + status.date + " " + status.time )
+                        return "ok", 200
+                    return "ok", 200
+                        
+                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+
+                    if(not messaging_event["postback"].has_key('payload')):
+                        return "ok", 200
+
+    return "ok", 200
+
+def get_tracking(tracking_id):
+    url = "https://track.aftership.com/thailand-post/"+tracking_id
+    r = requests.get(url)
+    data = r.text
+    soup = BeautifulSoup(data)
+    recent = soup.find_all('li',{'class':'checkpoint'})
+    if len(recent) <= 0:
+        return None
+    recent = recent[-1]
+    place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
+    datetime = recent.find('div',{'class':'checkpoint__time'})
+    date = datetime.find('strong').get_text()
+    time = datetime.find('div',{'class':'hint'}).get_text()
+    return {"place": place, "date":date, "time":time}
+
+def send_image(recipient_id, image):
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
     }
-    qs = 'access_token=' + FB_PAGE_TOKEN
-    resp = requests.post('https://graph.facebook.com/me/messages?' + qs,
-                         json=data)
-    return resp.content
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message":{
+            "attachment":{
+              "type":"image",
+              "payload":{
+                "url": image
+              }
+            }
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+
+def send_message(recipient_id, message_text):
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": message_text
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+
+def send_elements(recipient_id, elements, buttons):
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "list",
+                    "top_element_style": "compact",
+                    "elements": elements,
+                    "buttons": buttons
+                }
+            }
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+
+def send_generic(recipient_id, elements):
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+            "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": elements,
+                }
+            }
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 
-def first_entity_value(entities, entity):
-    if entity not in entities:
-        return None
-    val = entities[entity][0]['value']
-    if not val:
-        return None
-    return val['value'] if isinstance(val, dict) else val
 
-
-def send(request, response):
-    """
-    Sender function
-    """
-    fb_id = request['session_id']
-    text = response['text']
-    fb_message(fb_id, text)
-
-
-# Setup Actions
-actions = {
-    'send': send,
-}
-
-# Setup Wit Client
-client = Wit(access_token=WIT_TOKEN, actions=actions)
+def log(message):  
+    print str(message)
+    sys.stdout.flush()
 
 if __name__ == '__main__':
-    # Run Server
-    app.run(host='0.0.0.0', port=argv[1])
+    app.run(debug=True)
