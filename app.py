@@ -17,7 +17,7 @@ def tracking_kerry():
     data = request.args.get('tracking_id')
     status = get_tracking_kerry(data)
     print status
-    if status == None:
+    if status == None or status == 1:
         message = {
             "messages": [
                 {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
@@ -44,7 +44,7 @@ def tracking():
     data = request.args.get('tracking_id')
     status = get_tracking(data)
     print status
-    if status == None:
+    if status == None or status == 1:
         message = {
             "messages": [
                 {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
@@ -67,6 +67,8 @@ def tracking():
     return jsonify(message)
 
 def get_tracking_kerry(tracking_id):
+    if len(tracking_id) != 16:
+        return 1
     url = "https://track.aftership.com/kerry-logistics/"+tracking_id
     r = requests.get(url)
     data = r.text
@@ -86,6 +88,8 @@ def get_tracking_kerry(tracking_id):
     return {"place": place, "date":date, "time":time, "tag":tag}
 
 def get_tracking(tracking_id):
+    if len(tracking_id) != 13:
+        return 1
     url = "https://track.aftership.com/thailand-post/"+tracking_id
     r = requests.get(url)
     data = r.text
@@ -93,6 +97,7 @@ def get_tracking(tracking_id):
     recent = soup.find_all('li',{'class':'checkpoint'})
     if len(recent) <= 0:
         status_text = soup.find('p',{'id':'status-text'})
+        print status_text
         if status_text:
             return 0
         return None
