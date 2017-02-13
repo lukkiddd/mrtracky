@@ -15,7 +15,7 @@ app = Flask(__name__, static_url_path='')
 @app.route('/', methods=['GET'])
 def verify():
     if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
-        if not request.args.get("hub.verify_token") == os.environ["VERIFY_TOKEN"]:
+        if not request.args.get("hub.verify_token") == os.environ["FB_VERIFY_TOKEN"]:
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
     return "ok", 200
@@ -72,7 +72,7 @@ def get_tracking(tracking_id):
 
 def send_image(recipient_id, image):
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["FB_PAGE_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
@@ -98,7 +98,7 @@ def send_image(recipient_id, image):
 
 def send_message(recipient_id, message_text):
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["FB_PAGE_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
@@ -119,7 +119,7 @@ def send_message(recipient_id, message_text):
 
 def send_elements(recipient_id, elements, buttons):
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["FB_PAGE_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
@@ -147,7 +147,7 @@ def send_elements(recipient_id, elements, buttons):
 
 def send_generic(recipient_id, elements):
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["FB_PAGE_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
