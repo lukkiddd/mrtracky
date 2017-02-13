@@ -44,7 +44,7 @@ def webhook():
                         return "ok",200
                     else:
                         print status
-                        send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status['place'] + " เมื่อตอน " + status['date'] + " " + status['time'] )
+                        send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] )
                         return "ok", 200
                     return "ok", 200
                         
