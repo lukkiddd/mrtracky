@@ -36,7 +36,8 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     if(not messaging_event["message"].has_key('text')):
                         return "ok", 200
-                    message_text = messaging_event["message"]
+                    message_text = messaging_event["message"]["text"]
+
                     status = get_tracking(message_text)
                     if status == None:
                         send_message(sender_id, "เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า")
