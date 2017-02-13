@@ -15,22 +15,24 @@ app = Flask(__name__, static_url_path='')
 @app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.get_json()
-    print data['tracking_id']
-    status = get_tracking(data['tracking_id'])
-    if status == None:
-        message = {
-            "messages": [
-                {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
-            ]
-        }
-    else:
-        message = {
-            "messages": [
-                {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
-            ]
-        }
-    print message
-    return message
+    print data
+    print request
+    # print data['tracking_id']
+    # status = get_tracking(data['tracking_id'])
+    # if status == None:
+    #     message = {
+    #         "messages": [
+    #             {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
+    #         ]
+    #     }
+    # else:
+    #     message = {
+    #         "messages": [
+    #             {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
+    #         ]
+    #     }
+    # print message
+    return "ok", 200
 
 
 def get_tracking(tracking_id):
