@@ -20,6 +20,11 @@ def verify():
         return request.args["hub.challenge"], 200
     return "ok", 200
 
+@app.route('/tracking', methods=['GET']):
+def tracking():
+    
+    return "ok", 200
+
 @app.route('/', methods=['POST'])
 def webhook():
 
@@ -37,14 +42,15 @@ def webhook():
                     if(not messaging_event["message"].has_key('text')):
                         return "ok", 200
                     message_text = messaging_event["message"]["text"]
+                    # send_message(sender_id, "กำลังหา รอแปปน้า~!")
 
-                    status = get_tracking(message_text)
-                    if status == None:
-                        send_message(sender_id, "เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า")
-                        return "ok",200
-                    else:
-                        print status
-                        send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] )
+                    # status = get_tracking(message_text)
+                    # if status == None:
+                    #     send_message(sender_id, "เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?")
+                    #     return "ok",200
+                    # else:
+                    #     print status
+                    #     send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] )
                         return "ok", 200
                     return "ok", 200
                         
