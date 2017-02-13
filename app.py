@@ -14,7 +14,7 @@ app = Flask(__name__, static_url_path='')
 
 @app.route('/tracking', methods=['GET'])
 def tracking():
-    data = request.get_json()
+    data = request.args.get('tracking_id')
     print data
     print request
     # print data['tracking_id']
