@@ -22,8 +22,22 @@ def verify():
 
 @app.route('/tracking', methods=['GET']):
 def tracking():
-    
-    return "ok", 200
+    data = request.get_json()
+    print data['tracking_id']
+    status = get_tracking(data['tracking_id'])
+    if status == None:
+        message = {
+            "messages": [
+                {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
+            ]
+        }
+    else:
+        message = {
+         "messages": [
+           {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
+         ]
+        }
+    return message
 
 @app.route('/', methods=['POST'])
 def webhook():
