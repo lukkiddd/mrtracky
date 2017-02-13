@@ -43,6 +43,7 @@ def webhook():
                         send_message(sender_id, "เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า")
                         return "ok",200
                     else:
+                        print status
                         send_message(sender_id, u"ตอนนี้ของอยู่ที่ " + status.place + " เมื่อตอน " + status.date + " " + status.time )
                         return "ok", 200
                     return "ok", 200
