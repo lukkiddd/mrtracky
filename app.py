@@ -15,13 +15,18 @@ app = Flask(__name__, static_url_path='')
 @app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.args.get('tracking_id')
-    print data
     status = get_tracking(data)
     print status
     if status == None:
         message = {
             "messages": [
                 {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
+            ]
+        }
+    elif status == 0:
+        message = {
+            "messages": [
+                {"text": u"พัสดุอยู่ในสถานะ Pending รออีกสักพัก แล้วกลับมาเช็คใหม่น้าา!!"}
             ]
         }
     else:
@@ -41,6 +46,9 @@ def get_tracking(tracking_id):
     soup = BeautifulSoup(data)
     recent = soup.find_all('li',{'class':'checkpoint'})
     if len(recent) <= 0:
+        status_text = soup.find('p',{'id':'status-text'})
+        if status_text:
+            return 0
         return None
     recent = recent[0]
     place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
