@@ -15,7 +15,9 @@ app = Flask(__name__, static_url_path='')
 @app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.args.get('tracking_id')
+    print data
     status = get_tracking(data)
+    print status
     if status == None:
         message = {
             "messages": [
@@ -40,7 +42,7 @@ def get_tracking(tracking_id):
     recent = soup.find_all('li',{'class':'checkpoint'})
     if len(recent) <= 0:
         return None
-    recent = recent[-1]
+    recent = recent[0]
     place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
     datetime = recent.find('div',{'class':'checkpoint__time'})
     date = datetime.find('strong').get_text()
