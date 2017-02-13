@@ -6,7 +6,7 @@ import requests
 import re
 import time
 from bs4 import BeautifulSoup
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 import random
 import urllib
 
@@ -29,7 +29,7 @@ def tracking():
             ]
         }
     print message
-    return message
+    return jsonify(message)
 
 
 def get_tracking(tracking_id):
