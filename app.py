@@ -12,6 +12,53 @@ import urllib
 
 app = Flask(__name__, static_url_path='')
 
+@app.route('/tracking_kerry', methods=['GET'])
+def tracking():
+    data = request.args.get('tracking_id')
+    status = get_tracking_kerry(data)
+    print status
+    if status == None or status == 1:
+        message = {
+            "messages": [
+                {"text": u"เอ หาไม่เจอเลย บอกผิดรึเปล่าน้า?"}
+            ]
+        }
+    elif status == 0:
+        message = {
+            "messages": [
+                {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ Tracky กำลังติดต่อให้อยู่ รออีกสักพัก กลับมาเช็คใหม่นะครับ"}
+            ]
+        }
+    else:
+        message = {
+            "messages": [
+                {"text": u"สถานะ: " + status['tag'] },
+                {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
+            ]
+        }
+    print message
+    return jsonify(message)
+
+def get_tracking_kerry(tracking_id):
+    url = "https://track.aftership.com/kerry-logistics/"+tracking_id
+    r = requests.get(url)
+    data = r.text
+    soup = BeautifulSoup(data)
+    recent = soup.find_all('li',{'class':'checkpoint'})
+    if len(recent) <= 0:
+        status_text = soup.find('p',{'id':'status-text'})
+        print status_text
+        if status_text:
+            return 0
+        return None
+    recent = recent[0]
+    place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
+    datetime = recent.find('div',{'class':'checkpoint__time'})
+    date = datetime.find('strong').get_text()
+    tag = soup.find('p',{'class':'tag'}).get_text()
+    time = datetime.find('div',{'class':'hint'}).get_text()
+    return {"place": place, "date":date, "time":time, "tag":tag}
+
 @app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.args.get('tracking_id')
@@ -40,7 +87,7 @@ def tracking():
     return jsonify(message)
 
 def get_tracking(tracking_id):
-    url = "https://track.aftership.com/"+tracking_id
+    url = "https://track.aftership.com/thailand-post/"+tracking_id
     r = requests.get(url)
     data = r.text
     soup = BeautifulSoup(data)
