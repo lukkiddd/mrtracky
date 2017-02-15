@@ -57,7 +57,14 @@ def get_tracking_kerry(tracking_id):
     date = datetime.find('strong').get_text()
     tag = soup.find('p',{'class':'tag'}).get_text()
     time = datetime.find('div',{'class':'hint'}).get_text()
-    return {"place": place, "date":date, "time":time, "tag":tag}
+    if tag == "In Transit":
+        tag_th = u"กำลังส่ง"
+    elif tag == "Delivered":
+        tag_th = u"ถึงที่หมาย"
+    elif tag == "Out For Delivery":
+        tag_th = u"กำลังจำหน่าย ตามบ้าน"
+    time = datetime.find('div',{'class':'hint'}).get_text()
+    return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
 @app.route('/tracking', methods=['GET'])
 def tracking():
@@ -79,7 +86,7 @@ def tracking():
     else:
         message = {
             "messages": [
-                {"text": u"สถานะ: " + status['tag'] },
+                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
                 {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
             ]
         }
@@ -104,7 +111,14 @@ def get_tracking(tracking_id):
     date = datetime.find('strong').get_text()
     tag = soup.find('p',{'class':'tag'}).get_text()
     time = datetime.find('div',{'class':'hint'}).get_text()
-    return {"place": place, "date":date, "time":time, "tag":tag}
+    if tag == "In Transit":
+        tag_th = u"กำลังส่ง"
+    elif tag == "Delivered":
+        tag_th = u"ถึงที่หมาย"
+    elif tag == "Out For Delivery":
+        tag_th = u"กำลังจำหน่าย ตามบ้าน"
+    time = datetime.find('div',{'class':'hint'}).get_text()
+    return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
 if __name__ == '__main__':
     app.run(debug=True)
