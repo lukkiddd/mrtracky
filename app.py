@@ -30,22 +30,22 @@ def tracking_kerry():
             ]
         }
     else:
-    		if status['tag'] == "Delivered":
-    			message = {
-    					"messages": [
-    							{"text": u"พัสดุถึงที่หมายแล้ว"},
-    							{"text": status['place']},
-    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
-    					]
-    			}
-    		else:
-	        message = {
-	            "messages": [
-	                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
-									{"text": status['place']},
-    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
-	            ]
-	        }
+        if status['tag'] == "Delivered":
+          message = {
+              "messages": [
+                  {"text": u"พัสดุถึงที่หมายแล้ว"},
+                  {"text": status['place']},
+                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+              ]
+          }
+        else:
+          message = {
+              "messages": [
+                  {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+                  {"text": status['place']},
+                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+            ]
+          }
     print message
     return jsonify(message)
 
@@ -94,22 +94,22 @@ def tracking():
             ]
         }
     else:
-    		if status['tag'] == "Delivered":
-    			message = {
-    					"messages": [
-    							{"text": u"พัสดุถึงที่หมายแล้ว"},
-    							{"text": status['place']},
-    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
-    					]
-    			}
-    		else:
-	        message = {
-	            "messages": [
-	                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
-									{"text": status['place']},
-    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
-	            ]
-	        }
+        if status['tag'] == "Delivered":
+          message = {
+              "messages": [
+                  {"text": u"พัสดุถึงที่หมายแล้ว"},
+                  {"text": status['place']},
+                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+              ]
+          }
+        else:
+          message = {
+              "messages": [
+                  {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+                  {"text": status['place']},
+                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+              ]
+          }
     print message
     return jsonify(message)
 
