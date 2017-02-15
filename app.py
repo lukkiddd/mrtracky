@@ -13,7 +13,7 @@ import urllib
 app = Flask(__name__, static_url_path='')
 
 @app.route('/tracking_kerry', methods=['GET'])
-def tracking():
+def tracking_kerry():
     data = request.args.get('tracking_id')
     status = get_tracking_kerry(data)
     print status
