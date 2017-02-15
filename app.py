@@ -30,12 +30,22 @@ def tracking_kerry():
             ]
         }
     else:
-        message = {
-            "messages": [
-                {"text": u"สถานะ: " + status['tag'] },
-                {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
-            ]
-        }
+    		if status['tag'] == "Delivered":
+    			message = {
+    					"messages": [
+    							{"text": u"พัสดุถึงที่หมายแล้ว"},
+    							{"text": status['place']},
+    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
+    					]
+    			}
+    		else:
+	        message = {
+	            "messages": [
+	                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+									{"text": status['place']},
+    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
+	            ]
+	        }
     print message
     return jsonify(message)
 
@@ -84,12 +94,22 @@ def tracking():
             ]
         }
     else:
-        message = {
-            "messages": [
-                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
-                {"text": u"ตอนนี้ของอยู่ที่ " + status['place'] + u" เมื่อตอน " + status['date'] + " " + status['time'] }
-            ]
-        }
+    		if status['tag'] == "Delivered":
+    			message = {
+    					"messages": [
+    							{"text": u"พัสดุถึงที่หมายแล้ว"},
+    							{"text": status['place']},
+    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
+    					]
+    			}
+    		else:
+	        message = {
+	            "messages": [
+	                {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+									{"text": status['place']},
+    							{"text": u"เวลา: " + status['date'] + " " + status['time']}
+	            ]
+	        }
     print message
     return jsonify(message)
 
