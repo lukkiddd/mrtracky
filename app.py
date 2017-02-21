@@ -15,6 +15,7 @@ app = Flask(__name__, static_url_path='')
 @app.route('/tracking_kerry', methods=['GET'])
 def tracking_kerry():
     data = request.args.get('tracking_id')
+    get_tracking_kerry(data)
     status = get_tracking_kerry(data)
     print status
     if status == None or status == 1:
@@ -79,6 +80,7 @@ def get_tracking_kerry(tracking_id):
 @app.route('/tracking', methods=['GET'])
 def tracking():
     data = request.args.get('tracking_id')
+    get_tracking(data)
     status = get_tracking(data)
     print status
     if status == None or status == 1:
