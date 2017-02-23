@@ -27,7 +27,7 @@ def tracking_by_courier():
         }
     elif status == 0:
         user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-        user.set({courier_link.split('/')[-1]: {'tag': 'NOT FOUND'}})
+        user.set({courier_link.split('/')[-1]: {'tag': 'NOT FOUND', 'courier_link': courier_link}})
 
         message = {
             "messages": [
