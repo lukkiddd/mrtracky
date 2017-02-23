@@ -183,7 +183,7 @@ def get_tracking_all(tracking_id):
         for courier in multi_courier:
             multi_courier_return.append({"name":courier.get_text(),"link": "https://track.aftership.com"+courier['href']})
         return multi_courier_return
-    
+    print tracking_id
     courier = soup.find('div',{'class':'courier-info'}).find('h2').get_text()
     recent = soup.find_all('li',{'class':'checkpoint'})
     if len(recent) <= 0:
