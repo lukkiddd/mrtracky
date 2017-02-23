@@ -223,17 +223,29 @@ def tracking_all():
                     {
                       "set_attributes": 
                         {
+                          "courier": courier['name'],
                           "courier_link": courier['link']
                         },
                       "type": "show_block",
                       "block_name": "TrackByCourier",
                       "title": "ติดตามพัสดุ"
+                    },
+                    {
+                      "type": "show_block",
+                      "block_name": "nothing",
+                      "title": "ไม่มีอะไร"
                     }
                   ]
                 })
 
         message = {
              "messages": [
+                {
+                  "text": u"เอ... Tracky เจอ" + str(len(status)) + u" เจ้า ไม่ค่อยแน่ใจว่าเป็นของเจ้าไหน"
+                },
+                {
+                  "text": u"ไม่ทราบว่าเป็นของผู้บริการเจ้าไหนครับ?"
+                },
                 {
                   "attachment":{
                     "type":"template",
