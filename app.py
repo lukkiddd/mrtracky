@@ -214,7 +214,7 @@ def tracking_all():
     print message
     return jsonify(message)
 
-def get_tracking_all():
+def get_tracking_all(tracking_id):
     url = "https://track.aftership.com/"+tracking_id
     r = requests.get(url)
     data = r.text
