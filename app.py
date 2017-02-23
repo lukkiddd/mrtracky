@@ -44,6 +44,8 @@ def tracking_by_courier():
               ]
           }
         else:
+          user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
+          user.set({data: {'tag': status['tag']}})
           message = {
               "messages": [
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
@@ -142,7 +144,7 @@ def tracking_all():
     elif status == 0:
         user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
         user.set({data: {'tag': 'NOT FOUND'}})
-
+        
         message = {
             "messages": [
                 {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ Tracky กำลังติดต่อให้อยู่ รออีกสักพัก กลับมาเช็คใหม่นะครับ"}
@@ -158,6 +160,8 @@ def tracking_all():
               ]
           }
         else:
+          user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
+          user.set({data: {'tag': status['tag']}})
           message = {
               "messages": [
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },

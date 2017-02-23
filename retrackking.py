@@ -18,16 +18,17 @@ def send_broadcast():
         trackings = Firebase('https://bott-a9c49.firebaseio.com/users/'+user).get()
         for track in trackings:
             status = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track).get()
-            if status.has_key('courier_link'):
-                retval = get_tracking_by_courier(status['courier_link'])
-            else:
-                retval = get_tracking(track)
-            print retval
-            if retval != 0 and retval != None:
-                print retval['tag']
-                print status['tag']
-                if retval['tag'] != status['tag']:
-                    print retval
+            if(u"NOT FOUND" in status['tag']):
+                if status.has_key('courier_link'):
+                    retval = get_tracking_by_courier(status['courier_link'])
+                else:
+                    retval = get_tracking(track)
+                if retval != 0 and retval != None:
+                    if retval['tag'] != status['tag']:
+                        print retval
+                        tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
+                        tag.set({'tag': retval['tag']})
+                        send_message(user,retval)
 
 def get_tracking(tracking_id):
     url = "https://track.aftership.com/"+tracking_id
@@ -41,8 +42,6 @@ def get_tracking(tracking_id):
             return 0
         return None
     recent = recent[0]
-    print tracking_id
-    print soup.find('div',{'class':'courier-info'}).find('h2')
     courier = soup.find('div',{'class':'courier-info'}).find('h2').get_text()
     place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
     datetime = recent.find('div',{'class':'checkpoint__time'})
@@ -54,6 +53,11 @@ def get_tracking(tracking_id):
         tag_th = u"ถึงที่หมาย"
     elif tag == "Out For Delivery":
         tag_th = u"กำลังจำหน่าย ส่งตามบ้าน"
+    elif tag == "Info Received":
+        tag_th = u"รับของเข้าระบบ"
+    else:
+        print tag
+        tag_th = u""
     time = datetime.find('div',{'class':'hint'}).get_text()
     return {"courier": courier, "place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
@@ -81,29 +85,27 @@ def get_tracking_by_courier(courier_link):
         tag_th = u"ถึงที่หมาย"
     elif tag == "Out For Delivery":
         tag_th = u"กำลังจำหน่าย ตามบ้าน"
+    elif tag == "Info Received":
+        tag_th = u"รับของเข้าระบบ"
+    else:
+        tag_th = u""
     time = datetime.find('div',{'class':'hint'}).get_text()
     return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
 
-def send_message(recipient_id, message_text):
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
+def send_message(FB_ID, status):
     headers = {
         "Content-Type": "application/json"
     }
     data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text,
-        }
+        "item_tag": status['tag'],
+        "item_place": status['place'],
+        "item_date": status['date'],
+        "item_time": status['time'],
+        "item_tag_th": status['tag_th']
     })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
+    r = requests.post("https://api.chatfuel.com/bots/58a15c04e4b0b61e954293f8/users/"+ FB_ID +"/send?chatfuel_token=pQWCkbnlIi6qC4Pfbl1K9mZJDhEiv0eOW7nybEjvbmFxrdRCAeWiCg6HZMcYw4WF&chatfuel_block_id=58aeef24e4b0b54d86ec1484", headers=headers, data=data)
+    print r
 
 
 if __name__ == '__main__':
