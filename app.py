@@ -16,6 +16,7 @@ app = Flask(__name__, static_url_path='')
 @app.route('/tracking_by_courier', methods=["GET"])
 def tracking_by_courier():
     courier_link = request.args.get('courier_link')
+    fb_id = request.args.get('fb_id')
     status = get_tracking_by_courier(courier_link)
     print status
     if status == None or status == 1:
@@ -25,6 +26,9 @@ def tracking_by_courier():
             ]
         }
     elif status == 0:
+        user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
+        user.set({courier_link.split('/')[-1]: {'tag': 'NOT FOUND'}})
+
         message = {
             "messages": [
                 {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ Tracky กำลังติดต่อให้อยู่ รออีกสักพัก กลับมาเช็คใหม่นะครับ"}
@@ -137,7 +141,7 @@ def tracking_all():
         }
     elif status == 0:
         user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-        user.set({tracking_id: {'tag': 'NOT FOUND'}})
+        user.set({data: {'tag': 'NOT FOUND'}})
 
         message = {
             "messages": [
