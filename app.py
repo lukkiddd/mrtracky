@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, request, render_template, jsonify
 import random
 import urllib
+from firebase import Firebase
 
 app = Flask(__name__, static_url_path='')
 
@@ -80,7 +81,7 @@ def get_tracking_by_courier(courier_link):
 @app.route('/tracking_all', methods=["GET"])
 def tracking_all():
     data = request.args.get('tracking_id')
-    # fb_id = request.args.get('fb_id')
+    fb_id = request.args.get('fb_id')
     status = get_tracking_all(data)
     if isinstance(status, list):
         el = []
@@ -111,7 +112,7 @@ def tracking_all():
         message = {
              "messages": [
                 {
-                  "text": u"เอ... Tracky เจอ" + str(len(status)) + u" เจ้า ไม่ค่อยแน่ใจว่าเป็นของเจ้าไหน"
+                  "text": u"เอ... Tracky เจอ " + str(len(status)) + u" เจ้า ไม่ค่อยแน่ใจว่าเป็นของเจ้าไหน"
                 },
                 {
                   "text": u"ไม่ทราบว่าเป็นของผู้บริการเจ้าไหนครับ?"
@@ -128,7 +129,6 @@ def tracking_all():
               ]
             }
         return jsonify(message)
-
     if status == None or status == 1:
         message = {
             "messages": [
@@ -136,6 +136,9 @@ def tracking_all():
             ]
         }
     elif status == 0:
+        user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
+        user.set({tracking_id: {'tag': 'NOT FOUND'}})
+
         message = {
             "messages": [
                 {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ Tracky กำลังติดต่อให้อยู่ รออีกสักพัก กลับมาเช็คใหม่นะครับ"}
