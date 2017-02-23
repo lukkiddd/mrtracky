@@ -153,14 +153,14 @@ def tracking_all():
         for courier in status:
           el.append(
               {
-                "title": courier.name,
-                "subtitle": u"ติดตามพัสดุจาก " + courier.name,
+                "title": courier['name'],
+                "subtitle": u"ติดตามพัสดุจาก " + courier['name'],
                 "buttons":[
                   {
                     "set_attributes": 
                       {
-                        "courier": courier.name,
-                        "courier_link": courier.link
+                        "courier": courier['name'],
+                        "courier_link": courier['link']
                       },
                     "type": "show_block",
                     "block_name": "TrackByCourier",
