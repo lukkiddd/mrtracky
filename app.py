@@ -151,23 +151,23 @@ def tracking_all():
     if isinstance(status, list):
         el = []
         for courier in status:
-          el.append(
-              {
-                "title": courier['name'],
-                "subtitle": u"ติดตามพัสดุจาก " + courier['name'],
-                "buttons":[
-                  {
-                    "set_attributes": 
-                      {
-                        "courier": courier['name'],
-                        "courier_link": courier['link']
-                      },
-                    "type": "show_block",
-                    "block_name": "TrackByCourier",
-                    "title": "ติดตามพัสดุ"
-                  }
-                ]
-              })
+            el.append(
+                {
+                  "title": courier['name'],
+                  "subtitle": u"ติดตามพัสดุจาก " + courier['name'],
+                  "buttons":[
+                    {
+                      "set_attributes": 
+                        {
+                          "courier": courier['name'],
+                          "courier_link": courier['link']
+                        },
+                      "type": "show_block",
+                      "block_name": "TrackByCourier",
+                      "title": "ติดตามพัสดุ"
+                    }
+                  ]
+                })
 
         message = {
              "messages": [
@@ -182,6 +182,8 @@ def tracking_all():
                 }
               ]
             }
+        return jsonify(message)
+        
     if status == None or status == 1:
         message = {
             "messages": [
