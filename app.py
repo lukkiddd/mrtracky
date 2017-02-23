@@ -179,7 +179,7 @@ def tracking_by_courier():
     print message
     return jsonify(message)
 
-def get_tracking_by_courier(courier_link)
+def get_tracking_by_courier(courier_link):
     url = courier_link
     r = requests.get(url)
     data = r.text
