@@ -33,7 +33,7 @@ def subscribe_user():
         user.set({tracking_id: {'tag': 'NOT FOUND','subscribe': 'true'}})
     else:
         track_status = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id + '/'+tracking_id).get()
-        user.set({tracking_id: {'tag': track_status['tag'] , 'subscirbe': 'true' }})
+        user.set({tracking_id: {'tag': track_status['tag'] , 'subscribe': 'true' }})
     message = {
         "messages": [
             {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจะติดต่อไปทันที"}
