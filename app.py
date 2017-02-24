@@ -71,7 +71,13 @@ def tracking_by_courier():
               "messages": [
                   {"text": u"พัสดุถึงที่หมายแล้ว"},
                   {"text": status['place']},
-                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+                  {"text": u"เวลา: " + status['date'] + " " + status['time']ม
+                  "quick_replies": [
+                    {
+                      "title":"ok",
+                      "block_names":["เมนู"]
+                    }
+                  ]}
               ]
           }
         else:
@@ -210,7 +216,14 @@ def tracking_all():
               "messages": [
                   {"text": u"พัสดุถึงที่หมายแล้ว"},
                   {"text": status['place']},
-                  {"text": u"เวลา: " + status['date'] + " " + status['time']}
+                  {"text": u"เวลา: " + status['date'] + " " + status['time'],
+                  "quick_replies": [
+                    {
+                      "title":"ok",
+                      "block_names":["เมนู"]
+                    }
+                  ]
+                }
               ]
           }
         else:
