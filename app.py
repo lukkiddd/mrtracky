@@ -18,16 +18,19 @@ def subscribe_user():
     tracking_id = request.args.get('tracking_id')
     fb_id = request.args.get('fb_id')
 
-    user = Firebase('https://bott-a9c49.firebaseio.com/users_sub/' + fb_id)
+    user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
     tracks = user.get()
     found = False
+    found_track = ""
     if tracks:
         for track in tracks:
             if track == tracking_id:
                 found = True
+                found_track = track
     if not found:
-        user.set({tracking_id: {'tag': 'NOT FOUND'}})
-
+        user.set({tracking_id: {'tag': 'NOT FOUND', 'subscribe': 'true'}})
+    else:
+        user.set({tracking_id: {'subscribe': 'true'}})
     message = {
         "messages": [
             {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจะติดต่อไปทันที"}
