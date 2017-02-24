@@ -24,13 +24,15 @@ def subscribe_user():
     found_track = ""
     if tracks:
         for track in tracks:
+            print track, tracking_id
             if track == tracking_id:
                 found = True
                 found_track = track
+    print found
     if not found:
         user.set({tracking_id: {'tag': 'NOT FOUND', 'subscribe': 'true'}})
     else:
-        user.set({tracking_id: {'subscribe': 'true'}})
+        user.update({tracking_id: {'subscribe': 'true'}})
     message = {
         "messages": [
             {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจะติดต่อไปทันที"}
