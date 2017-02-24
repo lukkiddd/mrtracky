@@ -29,7 +29,7 @@ def send_broadcast():
                     if retval['tag'] != status['tag']:
                         print retval
                         tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                        tag.set({'tag': retval['tag']})
+                        tag.update({'tag': retval['tag']})
                         send_message(user,retval,track)
             elif status.has_key('subscribe') and u"Delivered" not in status['tag']:
                 print user,track,status['subscribe']
@@ -42,7 +42,7 @@ def send_broadcast():
                         if retval['tag'] != status['tag']:
                             print retval
                             tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                            tag.set({'tag': retval['tag']})
+                            tag.update({'tag': retval['tag']})
                             send_message(user,retval,track)
 
 def get_tracking(tracking_id):
