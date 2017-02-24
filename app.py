@@ -10,6 +10,7 @@ from flask import Flask, request, render_template, jsonify
 import random
 import urllib
 from firebase import Firebase
+import datetime
 
 app = Flask(__name__, static_url_path='')
 
@@ -30,10 +31,10 @@ def subscribe_user():
                 found = True
                 found_track = track
     if not found:
-        user.set({tracking_id: {'tag': 'NOT FOUND','subscribe': 'true'}})
+        user.set({tracking_id: {'tag': 'NOT FOUND','subscribe': 'true','created_at':datetime.datetime.now()}})
     else:
         track_status = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id + '/'+tracking_id).get()
-        user.set({tracking_id: {'tag': track_status['tag'] , 'subscribe': 'true' }})
+        user.update({tracking_id: {'tag': track_status['tag'] , 'subscribe': 'true','updated_at':datetime.datetime.now() }})
     message = {
         "messages": [
             {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจะติดต่อไปทันที"}
@@ -56,7 +57,7 @@ def tracking_by_courier():
         }
     elif status == 0:
         user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-        user.set({courier_link.split('/')[-1]: {'tag': 'NOT FOUND', 'courier_link': courier_link}})
+        user.set({courier_link.split('/')[-1]: {'tag': 'NOT FOUND', 'courier_link': courier_link,'created_at':datetime.datetime.now()}})
 
         message = {
             "messages": [
@@ -75,7 +76,7 @@ def tracking_by_courier():
           }
         else:
           user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-          user.set({data: {'tag': status['tag']}})
+          user.set({data: {'tag': status['tag'],'created_at':datetime.datetime.now()}})
           message = {
               "messages": [
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
@@ -196,7 +197,7 @@ def tracking_all():
         }
     elif status == 0:
         user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-        user.set({data: {'tag': 'NOT FOUND'}})
+        user.set({data: {'tag': 'NOT FOUND','created_at':datetime.datetime.now()}})
         
         message = {
             "messages": [
@@ -214,7 +215,7 @@ def tracking_all():
           }
         else:
           user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-          user.set({data: {'tag': status['tag']}})
+          user.set({data: {'tag': status['tag'],'created_at':datetime.datetime.now()}})
           message = {
               "messages": [
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },

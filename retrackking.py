@@ -10,7 +10,7 @@ from flask import Flask, request, render_template, jsonify
 import random
 import urllib
 from firebase import Firebase
-
+import datetime
 
 def send_broadcast():
     users = Firebase('https://bott-a9c49.firebaseio.com/users/').get()
@@ -29,7 +29,7 @@ def send_broadcast():
                     if retval['tag'] != status['tag']:
                         print retval
                         tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                        tag.update({'tag': retval['tag']})
+                        tag.update({'tag': retval['tag'],'updated_at':datetime.datetime.now()})
                         send_message(user,retval,track)
             elif status.has_key('subscribe') and u"Delivered" not in status['tag']:
                 print user,track,status['subscribe']
@@ -42,7 +42,7 @@ def send_broadcast():
                         if retval['tag'] != status['tag']:
                             print retval
                             tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                            tag.update({'tag': retval['tag']})
+                            tag.update({'tag': retval['tag'],'updated_at':datetime.datetime.now()})
                             send_message(user,retval,track)
 
 def get_tracking(tracking_id):
