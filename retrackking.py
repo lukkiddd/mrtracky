@@ -30,7 +30,7 @@ def send_broadcast():
                         print retval
                         tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
                         tag.set({'tag': retval['tag']})
-                        send_message(user,retval)
+                        send_message(user,retval,track)
             elif status.has_key('subscribe') and u"Delivered" not in status['tag']:
                 print user,track,status['subscribe']
                 if "true" in status['subscribe']:
@@ -43,7 +43,7 @@ def send_broadcast():
                             print retval
                             tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
                             tag.set({'tag': retval['tag']})
-                            send_message(user,retval)
+                            send_message(user,retval,track)
 
 def get_tracking(tracking_id):
     url = "https://track.aftership.com/"+tracking_id
@@ -108,11 +108,12 @@ def get_tracking_by_courier(courier_link):
     return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
 
-def send_message(FB_ID, status):
+def send_message(FB_ID, status, track):
     headers = {
         "Content-Type": "application/json"
     }
     data = json.dumps({
+        "item_track": track,
         "item_tag": status['tag'],
         "item_place": status['place'],
         "item_date": status['date'],
