@@ -21,9 +21,10 @@ def subscribe_user():
     user = Firebase('https://bott-a9c49.firebaseio.com/users_sub/' + fb_id)
     tracks = user.get()
     found = False
-    for track in tracks:
-        if track == tracking_id:
-            found = True
+    if tracks:
+        for track in tracks:
+            if track == tracking_id:
+                found = True
     if not found:
         user.set({tracking_id: {'tag': 'NOT FOUND'}})
 
