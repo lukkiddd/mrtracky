@@ -13,6 +13,13 @@ from firebase import Firebase
 
 app = Flask(__name__, static_url_path='')
 
+@app.route('/users_sub', methods=["GET"])
+def subscribe_user():
+    data = request.args.get('tracking_id')
+    fb_id = request.args.get('fb_id')
+    user = Firebase('https://bott-a9c49.firebaseio.com/users_sub/' + fb_id)
+    user.set({data: {'tag': 'NOT FOUND', 'courier_link': courier_link}})
+
 @app.route('/tracking_by_courier', methods=["GET"])
 def tracking_by_courier():
     courier_link = request.args.get('courier_link')
@@ -184,7 +191,7 @@ def get_tracking_all(tracking_id):
         for courier in multi_courier:
             multi_courier_return.append({"name":courier.get_text(),"link": "https://track.aftership.com"+courier['href']})
         return multi_courier_return
-        
+
     recent = soup.find_all('li',{'class':'checkpoint'})
     if len(recent) <= 0:
         status_text = soup.find('p',{'id':'status-text'})

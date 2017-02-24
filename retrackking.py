@@ -29,6 +29,22 @@ def send_broadcast():
                         tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
                         tag.set({'tag': retval['tag']})
                         send_message(user,retval)
+    users_sub = Firebase('https://bott-a9c49.firebaseio.com/users_sub/').get()
+    for user in users:
+        trackings = Firebase('https://bott-a9c49.firebaseio.com/users_sub/'+user).get()
+        for track in trackings:
+            status = Firebase('https://bott-a9c49.firebaseio.com/users_sub/'+user+'/'+track).get()
+            if(u"Delivered" not in status['tag'] and u"NOT FOUND" not in status['tag']):
+                if status.has_key('courier_link'):
+                    retval = get_tracking_by_courier(status['courier_link'])
+                else:
+                    retval = get_tracking(track)
+                if retval != 0 and retval != None:
+                    if retval['tag'] != status['tag']:
+                        print retval
+                        tag = Firebase('https://bott-a9c49.firebaseio.com/users_sub/'+user+'/'+track)
+                        tag.set({'tag': retval['tag']})
+                        send_message(user,retval)
 
 def get_tracking(tracking_id):
     url = "https://track.aftership.com/"+tracking_id
