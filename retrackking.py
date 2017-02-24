@@ -30,7 +30,8 @@ def send_broadcast():
                         tag.set({'tag': retval['tag']})
                         send_message(user,retval)
             elif status.has_key('subscribe') and u"Delivered" not in status['tag']:
-                if status['subscribe'] == "true":
+                print user,track,status['subscribe']
+                if "true" in status['subscribe']:
                     if status.has_key('courier_link'):
                         retval = get_tracking_by_courier(status['courier_link'])
                     else:
