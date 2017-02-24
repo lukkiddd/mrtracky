@@ -30,7 +30,7 @@ def subscribe_user():
 
     message = {
         "messages": [
-            {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจัดติดต่อไปทันที"}
+            {"text": u"ได้เลยครับ ถ้ามีอัพเดท ผมจะติดต่อไปทันที"}
         ]
     }
     return jsonify(message)
