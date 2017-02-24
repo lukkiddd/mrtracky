@@ -18,8 +18,6 @@ def send_broadcast():
         trackings = Firebase('https://bott-a9c49.firebaseio.com/users/'+user).get()
         for track in trackings:
             status = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track).get()
-            print user, track
-            print status
             if(u"NOT FOUND" in status['tag']):
                 if status.has_key('courier_link'):
                     retval = get_tracking_by_courier(status['courier_link'])
@@ -28,8 +26,10 @@ def send_broadcast():
                 if retval != 0 and retval != None:
                     if retval['tag'] != status['tag']:
                         print retval
-                        tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                        tag.update({'tag': retval['tag'],'updated_at':datetime.datetime.now()})
+                        if status.has_key('subscribe'):
+                            status.set({'tag': retval['tag'],'subscribe':'true','updated_at':datetime.datetime.now()})
+                        else:
+                            status.set({'tag': retval['tag'],'updated_at':datetime.datetime.now()})
                         send_message(user,retval,track)
             elif status.has_key('subscribe') and u"Delivered" not in status['tag']:
                 print user,track,status['subscribe']
@@ -42,7 +42,7 @@ def send_broadcast():
                         if retval['tag'] != status['tag']:
                             print retval
                             tag = Firebase('https://bott-a9c49.firebaseio.com/users/'+user+'/'+track)
-                            tag.update({'tag': retval['tag'],'updated_at':datetime.datetime.now()})
+                            tag.set({'tag': retval['tag'],'subscribe':'true','updated_at':datetime.datetime.now()})
                             send_message(user,retval,track)
 
 def get_tracking(tracking_id):
