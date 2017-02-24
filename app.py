@@ -75,29 +75,29 @@ def tracking_by_courier():
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
                   {"text": status['place']},
                   {"text": u"เวลา: " + status['date'] + " " + status['time']},
-                  # {
-                  #   "attachment": {
-                  #     "type": "template",
-                  #     "payload": {
-                  #       "template_type": "button",
-                  #       "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุไหมครับ",
-                  #       "buttons": [{
-                  #           "set_attributes": {
-                  #             "tracking_id": courier_link.split('/')[-1]
-                  #           },
-                  #           "type": "show_block",
-                  #           "block_name": "item sub",
-                  #           "title": "อัพเดทด้วย"
-                  #         },
-                  #         {
-                  #           "type": "show_block",
-                  #           "block_name": "nothing",
-                  #           "title": "ไม่เป็นไร"
-                  #         }
-                  #       ]
-                  #     }
-                  #   }
-                  # }
+                  {
+                    "attachment": {
+                      "type": "template",
+                      "payload": {
+                        "template_type": "button",
+                        "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุไหมครับ",
+                        "buttons": [{
+                            "set_attributes": {
+                              "tracking_id": courier_link.split('/')[-1]
+                            },
+                            "type": "show_block",
+                            "block_name": "item sub",
+                            "title": "อัพเดทด้วย"
+                          },
+                          {
+                            "type": "show_block",
+                            "block_name": "nothing",
+                            "title": "ไม่เป็นไร"
+                          }
+                        ]
+                      }
+                    }
+                  }
               ]
           }
     print message
@@ -214,27 +214,27 @@ def tracking_all():
                   {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
                   {"text": status['place']},
                   {"text": u"เวลา: " + status['date'] + " " + status['time']},
-                  # {
-                  #   "attachment": {
-                  #     "type": "template",
-                  #     "payload": {
-                  #       "template_type": "button",
-                  #       "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุไหมครับ",
-                  #       "buttons": [
-                  #         {
-                  #           "type": "show_block",
-                  #           "block_name": "item sub",
-                  #           "title": "อัพเดทด้วย"
-                  #         },
-                  #         {
-                  #           "type": "show_block",
-                  #           "block_name": "nothing",
-                  #           "title": "ไม่เป็นไร"
-                  #         }
-                  #       ]
-                  #     }
-                  #   }
-                  # }
+                  {
+                    "attachment": {
+                      "type": "template",
+                      "payload": {
+                        "template_type": "button",
+                        "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุไหมครับ",
+                        "buttons": [
+                          {
+                            "type": "show_block",
+                            "block_name": "item sub",
+                            "title": "อัพเดทด้วย"
+                          },
+                          {
+                            "type": "show_block",
+                            "block_name": "nothing",
+                            "title": "ไม่เป็นไร"
+                          }
+                        ]
+                      }
+                    }
+                  }
               ]
           }
     print message
