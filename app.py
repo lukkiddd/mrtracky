@@ -62,7 +62,30 @@ def tracking_by_courier():
         message = {
             "messages": [
                 {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ ผมกำลังติดต่อให้อยู่"},
-                {"text": u"รออีกสักพัก ถ้าผมติดต่อได้แล้วจะทักไปหานะครับ"}
+                {"text": u"ถ้าผมติดต่อได้แล้วจะทักไปหานะครับ"},
+                {
+                    "attachment": {
+                      "type": "template",
+                      "payload": {
+                        "template_type": "button",
+                        "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุด้วยไหมครับ",
+                        "buttons": [{
+                            "set_attributes": {
+                              "tracking_id": courier_link.split('/')[-1]
+                            },
+                            "type": "show_block",
+                            "block_name": "item sub",
+                            "title": "อัพเดทด้วย"
+                          },
+                          {
+                            "type": "show_block",
+                            "block_name": "nothing",
+                            "title": "ไม่เป็นไร"
+                          }
+                        ]
+                      }
+                    }
+                  }
             ]
         }
     else:
@@ -207,7 +230,28 @@ def tracking_all():
         
         message = {
             "messages": [
-                {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ Tracky กำลังติดต่อให้อยู่ รออีกสักพัก กลับมาเช็คใหม่นะครับ"}
+                {"text": u"พัสดุอยู่ในสถานะ Pending นะ ตอนนี้ ผมกำลังติดต่อให้อยู่"},
+                {"text": u"ถ้าผมติดต่อได้แล้วจะทักไปหานะครับ"},
+                {
+                    "attachment": {
+                      "type": "template",
+                      "payload": {
+                        "template_type": "button",
+                        "text": "ต้องการให้ผมคอยอัพเดทสถานะพัสดุด้วยไหมครับ",
+                        "buttons": [{
+                            "type": "show_block",
+                            "block_name": "item sub",
+                            "title": "อัพเดทด้วย"
+                          },
+                          {
+                            "type": "show_block",
+                            "block_name": "nothing",
+                            "title": "ไม่เป็นไร"
+                          }
+                        ]
+                      }
+                    }
+                  }
             ]
         }
     else:
