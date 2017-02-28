@@ -431,11 +431,11 @@ def get_check_price(postcode_from, postcode_to, weight):
     courier = table.find_all('tr')
     retval = []
     for c in courier:
-        image = courier.find('img')['src'].replace("//","https://")
+        image = c.find('img')['src'].replace("//","https://")
         name = image.split("logistic/")[-1].split(".png")[0].capitalize()
-        condition = courier.find_all('td')[3].get_text().split("\n")[-1]
-        price = courier.find_all('td')[4].get_text().split("\n")[-1]
-        source_place = courier.find_all('td')[5].get_text().split("\n")[-1]
+        condition = c.find_all('td')[3].get_text().split("\n")[-1]
+        price = c.find_all('td')[4].get_text().split("\n")[-1]
+        source_place = c.find_all('td')[5].get_text().split("\n")[-1]
         retval.append({'name':name, 'image': image, 'condition': condition, 'price': price,'source_place':source_place})
     return retval
 
