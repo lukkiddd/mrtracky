@@ -363,7 +363,7 @@ def get_tracking_shippop(tracking_id):
         tag = current.find('div',{'class':'line-1'}).get_text()
         tag_th = current.find('div',{'class':'line-1'}).get_text()
         place = current.find('div',{'class':'line-2'}).get_text()
-        return {"courier": u"shippop", "place": place, "date":date, "tag": tag, "tag_th" :tag_th}
+        return {"courier": u"shippop", "place": place, "time":time, "date":date, "tag": tag, "tag_th" :tag_th}
     else:
         return None
 
