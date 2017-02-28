@@ -378,7 +378,7 @@ def check_price():
 
     if courier_list == None:
         message = { "messages": [] }
-        if weight > 999:
+        if weight > 9999:
             message = { "messages": [
               {"text": u"หนักไปไหมครับเนี่ย ส่งรถบรรทุกน่าจะเวิร์คกว่า"}
             ]}
@@ -393,7 +393,7 @@ def check_price():
             el.append({
               "title": courier['name'],
               "image_url": courier['image'],
-              "subtitle": courier["price"] + u" " + courier['source_place'] + u" " + courier['condition'],
+              "subtitle": courier["price"] + u" | " + courier['source_place'] + u" " + courier['condition'],
               "buttons": [
                 {
                   "set_attributes": 
@@ -432,7 +432,7 @@ def check_price():
 def get_check_price(postcode_from, postcode_to, weight):
     if postcode_to < 10000 or postcode_to > 99999 or postcode_from < 10000 or postcode_from > 99999:
         return None
-    if weight < 1 or weight > 999:
+    if weight < 1 or weight > 9999:
         return None
     data = json.dumps({
         "postcode_from": postcode_from,
