@@ -64,13 +64,13 @@ def get_tracking(tracking_id):
     date = datetime.find('strong').get_text()
     tag = soup.find('p',{'class':'tag'}).get_text()
     if tag == "In Transit":
-        tag_th = u"กำลังส่ง"
+        tag_th = u"กำลังจัดส่ง"
     elif tag == "Delivered":
-        tag_th = u"ถึงที่หมาย"
+        tag_th = u"ผู้รับได้รับเรียบร้อย"
     elif tag == "Out For Delivery":
-        tag_th = u"กำลังจำหน่าย ส่งตามบ้าน"
+        tag_th = u"เตรียมการนำจ่าย"
     elif tag == "Info Received":
-        tag_th = u"รับของเข้าระบบ"
+        tag_th = u"รับเข้าระบบ"
     else:
         print tag
         tag_th = u""
@@ -96,13 +96,13 @@ def get_tracking_by_courier(courier_link):
     tag = soup.find('p',{'class':'tag'}).get_text()
     time = datetime.find('div',{'class':'hint'}).get_text()
     if tag == "In Transit":
-        tag_th = u"กำลังส่ง"
+        tag_th = u"กำลังจัดส่ง"
     elif tag == "Delivered":
-        tag_th = u"ถึงที่หมาย"
+        tag_th = u"ผู้รับได้รับเรียบร้อย"
     elif tag == "Out For Delivery":
-        tag_th = u"กำลังจำหน่าย ตามบ้าน"
+        tag_th = u"เตรียมการนำจ่าย"
     elif tag == "Info Received":
-        tag_th = u"รับของเข้าระบบ"
+        tag_th = u"รับเข้าระบบ"
     else:
         tag_th = u""
     time = datetime.find('div',{'class':'hint'}).get_text()

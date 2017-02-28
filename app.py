@@ -108,7 +108,7 @@ def tracking_by_courier():
           user.set({data: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
           message = {
               "messages": [
-                  {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+                  {"text": u"สถานะ: " + status['tag_th'] },
                   {"text": status['place']},
                   {"text": u"เวลา: " + status['date'] + " " + status['time']},
                   {
@@ -158,11 +158,15 @@ def get_tracking_by_courier(courier_link):
     tag = soup.find('p',{'class':'tag'}).get_text()
     time = datetime.find('div',{'class':'hint'}).get_text()
     if tag == "In Transit":
-        tag_th = u"กำลังส่ง"
+        tag_th = u"กำลังจัดส่ง"
     elif tag == "Delivered":
-        tag_th = u"ถึงที่หมาย"
+        tag_th = u"ผู้รับได้รับเรียบร้อย"
     elif tag == "Out For Delivery":
-        tag_th = u"กำลังจำหน่าย ตามบ้าน"
+        tag_th = u"เตรียมการนำจ่าย"
+    elif tag == "Info Received":
+        tag_th = u"รับเข้าระบบ"
+    else:
+        tag_th = u""
     time = datetime.find('div',{'class':'hint'}).get_text()
     return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
@@ -171,7 +175,10 @@ def get_tracking_by_courier(courier_link):
 def tracking_all():
     data = request.args.get('tracking_id')
     fb_id = request.args.get('fb_id')
-    status = get_tracking_all(data)
+    if data.startswith(u'SP'):
+        status = get_tracking_shippop(data)
+    else:
+        status = get_tracking_all(data)
     if isinstance(status, list):
         el = []
         for courier in status:
@@ -255,7 +262,7 @@ def tracking_all():
             ]
         }
     else:
-        if status['tag'] == "Delivered":
+        if status['tag'] == "Delivered" or u"ผู้รับได้รับเรียบร้อย" in status['tag']:
           message = {
               "messages": [
                   {"text": u"พัสดุถึงที่หมายแล้ว"},
@@ -275,7 +282,7 @@ def tracking_all():
           user.set({data: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
           message = {
               "messages": [
-                  {"text": u"สถานะ: " + status['tag'] + " (" + status['tag_th'] + ")" },
+                  {"text": u"สถานะ: " + status['tag_th'] },
                   {"text": status['place']},
                   {"text": u"เวลา: " + status['date'] + " " + status['time']},
                   {
@@ -331,13 +338,34 @@ def get_tracking_all(tracking_id):
     date = datetime.find('strong').get_text()
     tag = soup.find('p',{'class':'tag'}).get_text()
     if tag == "In Transit":
-        tag_th = u"กำลังส่ง"
+        tag_th = u"กำลังจัดส่ง"
     elif tag == "Delivered":
-        tag_th = u"ถึงที่หมาย"
+        tag_th = u"ผู้รับได้รับเรียบร้อย"
     elif tag == "Out For Delivery":
-        tag_th = u"กำลังจำหน่าย ส่งตามบ้าน"
+        tag_th = u"เตรียมการนำจ่าย"
+    elif tag == "Info Received":
+        tag_th = u"รับเข้าระบบ"
+    else:
+        tag_th = u""
     time = datetime.find('div',{'class':'hint'}).get_text()
     return {"courier": courier, "place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
+
+def get_tracking_shippop(tracking_id):
+    url = "https://www.shippop.com/tracking/?tracking_code=" + tracking_id
+    r = requests.get(url)
+    data = r.text
+    soup = BeautifulSoup(data)
+    current = soup.find_all('div', {'class':'state'})
+    if current:
+        current = current[-1]
+        date = current.find('div',{'class':'date'}).get_text()
+        time = current.find('div',{'class':'time'}).get_text()
+        tag = current.find('div',{'class':'line-1'}).get_text()
+        tag_th = current.find('div',{'class':'line-1'}).get_text()
+        place = current.find('div',{'class':'line-2'}).get_text()
+        return {"courier": u"shippop", "place": place, "date":date, "tag": tag, "tag_th" :tag_th}
+    else:
+        return None
 
 if __name__ == '__main__':
     app.run(debug=True)
