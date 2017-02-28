@@ -391,10 +391,25 @@ def check_price():
         for courier in courier_list:
             print courier
             el.append({
-              "title": courier["price"] + u" " + courier['name'],
+              "title": courier['name'],
               "image_url": courier['image'],
-              "subtitle": courier['condition'] + u" " + courier['source_place'],
+              "subtitle": courier["price"] + u" " + courier['source_place'] + u" " + courier['condition'],
               "buttons": [
+                {
+                  "set_attributes": 
+                  {
+                    "postcode_from": postcode_from,
+                    "postcode_to": postcode_to,
+                    "weight": weight,
+                    "c_name": courier['name'],
+                    "c_price": courier['price'],
+                    "c_source_place": courier['source_place'],
+                    "c_condition": courier['condition']
+                  },
+                  "type": "show_block",
+                  "block_name": "checkprice detail",
+                  "title": u"ดูรายละเอียด"
+                },
                 {
                   "type":"element_share"
                 }
