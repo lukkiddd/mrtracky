@@ -22,7 +22,10 @@ def send_broadcast():
                 if status.has_key('courier_link'):
                     retval = get_tracking_by_courier(status['courier_link'])
                 else:
-                    retval = get_tracking(track)
+                    if track.startswith("SP"):
+                        retval = get_tracking_shippop(track)
+                    else:
+                        retval = get_tracking(track)
                 if retval != 0 and retval != None:
                     if retval['tag'] != status['tag']:
                         print retval
@@ -38,7 +41,10 @@ def send_broadcast():
                     if status.has_key('courier_link'):
                         retval = get_tracking_by_courier(status['courier_link'])
                     else:
-                        retval = get_tracking(track)
+                        if track.startswith("SP"):
+                            retval = get_tracking_shippop(track)
+                        else:
+                            retval = get_tracking(track)
                     if retval != 0 and retval != None:
                         if retval['tag'] != status['tag']:
                             print retval
@@ -108,6 +114,22 @@ def get_tracking_by_courier(courier_link):
     time = datetime.find('div',{'class':'hint'}).get_text()
     return {"place": place, "date":date, "time":time, "tag":tag, "tag_th" :tag_th}
 
+def get_tracking_shippop(tracking_id):
+    url = "https://www.shippop.com/tracking/?tracking_code=" + tracking_id
+    r = requests.get(url)
+    data = r.content
+    soup = BeautifulSoup(data)
+    current = soup.find_all('div', {'class':'state'})
+    if current:
+        current = current[-1]
+        date = current.find('div',{'class':'date'}).get_text()
+        time = current.find('div',{'class':'time'}).get_text()
+        tag = current.find('div',{'class':'line-1'}).get_text()
+        tag_th = current.find('div',{'class':'line-1'}).get_text()
+        place = current.find('div',{'class':'line-2'}).get_text()
+        return {"courier": u"shippop", "place": place, "time":time, "date":date, "tag": tag, "tag_th" :tag_th}
+    else:
+        return None
 
 def send_message(FB_ID, status, track):
     headers = {
