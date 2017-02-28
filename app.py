@@ -353,7 +353,7 @@ def get_tracking_all(tracking_id):
 def get_tracking_shippop(tracking_id):
     url = "https://www.shippop.com/tracking/?tracking_code=" + tracking_id
     r = requests.get(url)
-    data = r.text
+    data = r.content
     soup = BeautifulSoup(data)
     current = soup.find_all('div', {'class':'state'})
     if current:
