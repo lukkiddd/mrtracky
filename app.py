@@ -428,13 +428,16 @@ def get_check_price(postcode_from, postcode_to, weight):
     data = r.content
     soup = BeautifulSoup(data)
     table = soup.find('table')
-    courier = table.find_all('tr')[-1]
-    image = courier.find('img')['src'].replace("//","https://")
-    name = image.split("logistic/")[-1].split(".png")[0].capitalize()
-    condition = courier.find_all('td')[3].get_text().split("\n")[-1]
-    price = courier.find_all('td')[4].get_text().split("\n")[-1]
-    source_place = courier.find_all('td')[5].get_text().split("\n")[-1]
-    return {'name':name, 'image': image, 'condition': condition, 'price': price,'source_place':source_place}
+    courier = table.find_all('tr')
+    retval = []
+    for c in courier:
+        image = courier.find('img')['src'].replace("//","https://")
+        name = image.split("logistic/")[-1].split(".png")[0].capitalize()
+        condition = courier.find_all('td')[3].get_text().split("\n")[-1]
+        price = courier.find_all('td')[4].get_text().split("\n")[-1]
+        source_place = courier.find_all('td')[5].get_text().split("\n")[-1]
+        retval.append({'name':name, 'image': image, 'condition': condition, 'price': price,'source_place':source_place})
+    return retval
 
 if __name__ == '__main__':
     app.run(debug=True)
