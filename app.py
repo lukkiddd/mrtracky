@@ -389,6 +389,7 @@ def check_price():
     else:
         el = []
         for courier in courier_list:
+            print courier
             el.append({
               "title": courier["price"] + u" " + courier['name'],
               "image_url": courier['image'],
