@@ -369,5 +369,71 @@ def get_tracking_shippop(tracking_id):
     else:
         return None
 
+@app.route('/check_price', methods=["GET"])
+def check_price():
+    postcode_from = int(request.args.get('postcode_from'))
+    postcode_to = int(request.args.get('postcode_to'))
+    weight = int(request.args.get('weight'))
+    courier_list = get_check_price(postcode_from, postcode_to, weight)
+
+    if courier_list == None:
+        message = { "messages": [] }
+        if weight > 999:
+            message = { "messages": [
+              {"text": u"หนักไปไหมครับเนี่ย ส่งรถบรรทุกน่าจะเวิร์คกว่า"}
+            ]}
+        else:
+            message = { "messages": [
+              {"text": u"กรอกอะไรผิดรึเปล่าครับ?"}
+            ]}
+    else:
+        el = []
+        for courier in courier_list:
+            el.append({
+              "title": courier["price"] + u" " + courier['name'],
+              "image_url": courier['image'],
+              "subtitle": courier['condition'] + u" " + courier['source_place'],
+              "buttons": [
+                {
+                  "type":"element_share"
+                }
+              ]
+              })
+        message = {
+          "messages": [{
+              "attachment":{
+                "type":"template",
+                "payload":{
+                  "template_type":"generic",
+                  "elements": el
+                }
+              }
+          }]
+        }
+    return jsonify(message)
+
+
+def get_check_price(postcode_from, postcode_to, weight):
+    if postcode_to < 10000 or postcode_to > 99999 or postcode_from < 10000 or postcode_from > 99999:
+        return None
+    if weight < 1 or weight > 999:
+        return None
+    data = json.dumps({
+        "postcode_from": postcode_from,
+        "postcode_to": postcode_to,
+        "weight": weight,
+    })
+    r = requests.post("https://www.shippop.com/checkprice/", data=data)
+    data = r.content
+    soup = BeautifulSoup(data)
+    table = soup.find('table')
+    courier = table.find_all('tr')[-1]
+    image = courier.find('img')['src'].replace("//","https://")
+    name = image.split("logistic/")[-1].split(".png")[0].capitalize()
+    condition = courier.find_all('td')[3].get_text().split("\n")[-1]
+    price = courier.find_all('td')[4].get_text().split("\n")[-1]
+    source_place = courier.find_all('td')[5].get_text().split("\n")[-1]
+    return {'name':name, 'image': image, 'condition': condition, 'price': price,'source_place':source_place}
+
 if __name__ == '__main__':
     app.run(debug=True)
