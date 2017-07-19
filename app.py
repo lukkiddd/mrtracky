@@ -105,7 +105,7 @@ def tracking_by_courier():
           }
         else:
           user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-          user.set({data: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
+          user.set({courier_link.split('/')[-1]: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
           message = {
               "messages": [
                   {"text": u"สถานะ: " + status['tag_th'] },
