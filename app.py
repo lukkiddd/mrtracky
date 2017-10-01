@@ -16,11 +16,11 @@ app = Flask(__name__, static_url_path='')
 
 @app.route('/tracking', methods=["POST"])
 def tracking():
-    result = request.form.get('result')
+    result = request.form.get('result') or ''
     print result
 
     message = {
-        displayText: u'ต่อแล้ววว'
+        'displayText': u'ต่อแล้ววว'
     }
     return jsonify(message)
 
