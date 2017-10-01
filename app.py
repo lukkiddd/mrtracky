@@ -14,6 +14,16 @@ import datetime
 
 app = Flask(__name__, static_url_path='')
 
+@app.route('/tracking', methods=["POST"])
+def tracking():
+    result = request.form.get('result')
+    print result
+
+    message = {
+        displayText: u'ต่อแล้ววว'
+    }
+    return jsonify(message)
+
 @app.route('/users_sub', methods=["GET"])
 def subscribe_user():
     tracking_id = request.args.get('tracking_id')
