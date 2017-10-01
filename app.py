@@ -39,8 +39,8 @@ def tracking():
             }
         elif status == 0:
             message = {
-                'speech': u'พัสดุอยู่ในสถานะ Pending นะคะ ไว้มาเช็คใหม่น้าา',
-                'displayText': u'พัสดุอยู่ในสถานะ Pending นะคะ ไว้มาเช็คใหม่น้าา'
+                'speech': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา',
+                'displayText': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา'
             }
         else:
             if status['tag'] == "Delivered":
