@@ -20,7 +20,7 @@ def tracking():
     print result
 
     message = {
-        'speech': u'ต่อแล้วว'
+        'speech': u'ต่อแล้วว',
         'displayText': u'ต่อแล้ววว'
     }
     return jsonify(message)
