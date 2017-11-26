@@ -19,7 +19,13 @@ def tracking():
     result = json.loads(request.data)
     tracking_id = result['result']['parameters']['tracking_no']
     status = get_tracking_all(tracking_id)
-
+    if type(status) is list:
+        for s in status:
+            if 'Kerry' in s['name']:
+                status = get_tracking_by_courier(s['link'])
+                break
+            else:
+                status = None
     if status == None or status == 1:
         message = {
             'speech': u'เค้าขอโทษ เค้าหาไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา',
