@@ -18,43 +18,31 @@ app = Flask(__name__, static_url_path='')
 def tracking():
     result = json.loads(request.data)
     tracking_id = result['result']['parameters']['tracking_no']
-    track_result = get_tracking_all(tracking_id)
-    choose_track = {}
-    for t in track_result:
-        if 'Thailand' in t['name']:
-            choose_track = t
-        elif 'Kerry Express Thailand' in t['name']:
-            choose_track = t
-    if not choose_track:
+    status = get_tracking_all(tracking_id)
+
+    if status == None or status == 1:
         message = {
-            'speech': u'เค้าขอโทษ เค้าไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา',
-            'displayText': u'เค้าขอโทษ เค้าไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา'
+            'speech': u'เค้าขอโทษ เค้าหาไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา',
+            'displayText': u'เค้าขอโทษ เค้าหาไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา'
+        }
+    elif status == 0:
+        message = {
+            'speech': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา',
+            'displayText': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา'
         }
     else:
-        status = get_tracking_by_courier(choose_track['link'])
-        if status == None or status == 1:
+        if status['tag'] == "Delivered":
             message = {
-                'speech': u'เค้าขอโทษ เค้าไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา',
-                'displayText': u'เค้าขอโทษ เค้าไม่เจอเลย รหัสผิดรึเปล่า หรือว่าเป็นเจ้าที่เค้าไม่รู้จัก? ขอโทษน้าา'
-            }
-        elif status == 0:
-            message = {
-                'speech': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา',
-                'displayText': u'พัสดุอยู่ในสถานะ Pending นะครับ ไว้มาเช็คใหม่น้าา'
+                'speech': u"พัสดุถึง " + status['place'] + u" แล้ว ตอน " + status['date'] + u" | " + status['time'],
+                'displayText': u"พัสดุถึง " + status['place'] + u" แล้ว ตอน " + status['date'] + u" | " + status['time']
             }
         else:
-            if status['tag'] == "Delivered":
-                message = {
-                    'speech': u"พัสดุถึง " + status['place'] + u" แล้ว ตอน " + status['date'] + u" | " + status['time'],
-                    'displayText': u"พัสดุถึง " + status['place'] + u" แล้ว ตอน " + status['date'] + u" | " + status['time']
-                }
-            else:
-                user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
-                user.set({choose_track['link'].split('/')[-1]: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
-                message = {
-                    'speech': u'สถานะ: ' + status['tag_th'] + u' ที่ ' + status['place'] + u" ตอน " + status['date'] + u" | " + status['time'],
-                    'displayText': u'สถานะ: ' + status['tag_th'] + u' ที่ ' + status['place'] + u" ตอน " + status['date'] + u" | " + status['time']
-                }
+            user = Firebase('https://bott-a9c49.firebaseio.com/users/' + fb_id)
+            user.set({choose_track['link'].split('/')[-1]: {'tag': status['tag'],'created_at':str(datetime.datetime.now())}})
+            message = {
+                'speech': u'สถานะ: ' + status['tag_th'] + u' ที่ ' + status['place'] + u" ตอน " + status['date'] + u" | " + status['time'],
+                'displayText': u'สถานะ: ' + status['tag_th'] + u' ที่ ' + status['place'] + u" ตอน " + status['date'] + u" | " + status['time']
+            }
     return jsonify(message)
 
 @app.route('/users_sub', methods=["GET"])
@@ -373,7 +361,6 @@ def get_tracking_all(tracking_id):
         if status_text:
             return 0
         return None
-    print tracking_id
     courier = soup.find('div',{'class':'courier-info'}).find('h2').get_text()
     recent = recent[0]
     place = recent.find('div',{'class':'checkpoint__content'}).find('div',{'class':'hint'}).get_text()
